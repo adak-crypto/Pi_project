@@ -2,13 +2,11 @@ import tkinter as tk
 import numpy as np
 import matplotlib.pyplot as plt
 
-import time
-
 VARIABLE_2D = 2
 VARIABLE_3D = 3
 
 
-def pi(number_of_points, points_inside, loop_number):
+def pi(number_of_points, points_inside, loop_point_number):
     points = np.random.rand(number_of_points, dimension_variable.get())
     points_vector_bool = np.sqrt(np.sum(points ** 2, axis=1)) < 1
 
@@ -19,10 +17,10 @@ def pi(number_of_points, points_inside, loop_number):
         points_inside_matrix[point] += np.sum(points_vector_bool[:point + 1])
 
         if dimension_variable.get() == VARIABLE_2D:
-            pi_results[point] = points_inside_matrix[point] / (point + loop_number + 1) * 4
+            pi_results[point] = points_inside_matrix[point] / (point + loop_point_number + 1) * 4
 
         else:
-            pi_results[point] = points_inside_matrix[point] / (point + loop_number + 1) * 6
+            pi_results[point] = points_inside_matrix[point] / (point + loop_point_number + 1) * 6
 
     print("pi result loop ", pi_results)
     points_inside = points_inside_matrix[number_of_points - 1]
@@ -57,7 +55,7 @@ def initial_axes():
     return ax1, ax2, ax3
 
 
-def plots(ax1, ax2, ax3, number_of_points, random_points, points_vector_bool, pi_results, loop_number):
+def plots(ax1, ax2, ax3, number_of_points, random_points, points_vector_bool, pi_results, loop_point_number):
     break_time = 0.0001
 
     if dimension_variable.get() == VARIABLE_2D:
@@ -73,17 +71,14 @@ def plots(ax1, ax2, ax3, number_of_points, random_points, points_vector_bool, pi
 
     plt.pause(break_time)
 
-    # print("t shape ", np.arange(i, i + step_points_variable.get()))
-    # print("pi shape ", pi_results[i:i + step_points_variable.get()])
-
-    ax2.scatter(np.arange(loop_number, loop_number + number_of_points),
-                pi_results[loop_number:loop_number + number_of_points], c='g', marker='x')
-    ax2.scatter(np.arange(loop_number, loop_number + number_of_points), [np.pi] * number_of_points, c='r', marker=0)
+    ax2.scatter(np.arange(loop_point_number, loop_point_number + number_of_points),
+                pi_results[loop_point_number:loop_point_number + number_of_points], c='g', marker='x')
+    ax2.scatter(np.arange(loop_point_number, loop_point_number + number_of_points), [np.pi] * number_of_points, c='r',
+                marker=0)
     plt.pause(break_time)
 
-    n, bins, _ = ax3.hist(pi_results[:loop_number + number_of_points], bins=[0, 1, 2, 3, 4, 5, 6, 7, 8], color='b')
-    # print("n ", n)
-    # print("bins ", bins)
+    ax3.hist(pi_results[:loop_point_number + number_of_points], bins=np.arange(0, 8, 0.25), color='b')
+
     plt.pause(break_time)
 
 
@@ -108,37 +103,36 @@ def figures():
     print("number of complete loop ", number_of_complete_loops)
 
     if incomplete_loop_points > 0:
-        for loop_number in range(starting_points_variable.get(), number_of_points_variable.get() -
+        for loop_point_number in range(starting_points_variable.get(), number_of_points_variable.get() -
                                  step_points_variable.get(), step_points_variable.get()):
             random_points, points_vector_bool, temporary_pi_results, points_inside = pi(step_points_variable.get(),
-                                                                                        points_inside, loop_number)
-            pi_results[loop_number:loop_number + step_points_variable.get()] = temporary_pi_results
+                                                                                        points_inside,
+                                                                                        loop_point_number)
+            pi_results[loop_point_number:loop_point_number + step_points_variable.get()] = temporary_pi_results
 
-            # print("points_inside ", points_inside)
-
-            plots(ax1, ax2, ax3, step_points_variable.get(), random_points, points_vector_bool, pi_results, loop_number)
+            plots(ax1, ax2, ax3, step_points_variable.get(), random_points, points_vector_bool, pi_results,
+                  loop_point_number)
 
         random_points, points_vector_bool, temporary_pi_results, points_inside = pi(incomplete_loop_points,
                                                                                     points_inside,
-                                                                                    starting_points_variable.get() + number_of_complete_loops * step_points_variable.get())
-        pi_results[starting_points_variable.get() + number_of_complete_loops * step_points_variable.get():starting_points_variable.get() + number_of_complete_loops * step_points_variable.get() + incomplete_loop_points] = temporary_pi_results
-
-        print("po results ", pi_results)
+                                                                                    number_of_points_variable.get() -
+                                                                                    incomplete_loop_points)
+        pi_results[number_of_points_variable.get() - incomplete_loop_points:] = temporary_pi_results
 
         plots(ax1, ax2, ax3, incomplete_loop_points, random_points, points_vector_bool, pi_results,
               number_of_complete_loops * step_points_variable.get())
 
     else:
 
-        for loop_number in range(starting_points_variable.get(), number_of_points_variable.get(),
+        for loop_point_number in range(starting_points_variable.get(), number_of_points_variable.get(),
                                  step_points_variable.get()):
             random_points, points_vector_bool, temporary_pi_results, points_inside = pi(step_points_variable.get(),
-                                                                                        points_inside, loop_number)
-            pi_results[loop_number:loop_number + step_points_variable.get()] = temporary_pi_results
+                                                                                        points_inside,
+                                                                                        loop_point_number)
+            pi_results[loop_point_number:loop_point_number + step_points_variable.get()] = temporary_pi_results
 
-            # print("points_inside ", points_inside)
-
-            plots(ax1, ax2, ax3, step_points_variable.get(), random_points, points_vector_bool, pi_results, loop_number)
+            plots(ax1, ax2, ax3, step_points_variable.get(), random_points, points_vector_bool, pi_results,
+                  loop_point_number)
 
     plt.show()
 
