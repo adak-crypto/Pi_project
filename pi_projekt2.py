@@ -22,7 +22,6 @@ def pi(number_of_points, points_inside, loop_point_number):
         else:
             pi_results[point] = points_inside_matrix[point] / (point + loop_point_number + 1) * 6
 
-    print("pi result loop ", pi_results)
     points_inside = points_inside_matrix[number_of_points - 1]
 
     return points, points_vector_bool, pi_results, points_inside
@@ -41,6 +40,9 @@ def initial_axes():
 
     if dimension_variable.get() == VARIABLE_3D:
         ax1 = fig.add_subplot(221, projection='3d')
+        ax1.set_xlabel("X")
+        ax1.set_ylabel("Y")
+        ax1.set_zlabel("Z")
 
     ax1.set_title('Losowe Punkty')
 
@@ -99,8 +101,6 @@ def figures():
                               step_points_variable.get()
     number_of_complete_loops = (number_of_points_variable.get() - starting_points_variable.get()) // \
                                 step_points_variable.get()
-
-    print("number of complete loop ", number_of_complete_loops)
 
     if incomplete_loop_points > 0:
         for loop_point_number in range(starting_points_variable.get(), number_of_points_variable.get() -
